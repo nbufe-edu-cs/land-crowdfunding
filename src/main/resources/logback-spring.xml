@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false">
+    <property name="fileLayout" value="%-5p - %d{yyyy-MM-dd HH:mm:ss} -%-30.30class{30} - %-4line: %m%n"/>
+    <property name="consoleLayout" value="%-5p - %d{yyyy-MM-dd HH:mm:ss} -%-30.30class{30} - %-4line: %m%n"/>
+    <property name="filePath" value="log/%d{yyyy-MM-dd}.log"/>
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.out</target>
+        <withJansi>true</withJansi>
+        <encoder>
+            <pattern>${consoleLayout}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <append>true</append>
+        <!--格式-->
+        <!-- <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder"> -->
+        <encoder>
+            <pattern>${fileLayout}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+        <!--策略-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${filePath}</fileNamePattern>
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>200MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <!--    <root level="INFO">-->
+    <!--        <appender-ref ref="file"/>-->
+    <!--        <appender-ref ref="console"/>-->
+    <!--    </root>-->
+    <springProfile name="dev">
+        <logger name="org.crazyboy" level="DEBUG" additivity="false">
+<!--            <appender-ref ref="file"/>-->
+            <appender-ref ref="console"/>
+        </logger>
+    </springProfile>
+
+    <springProfile name="prod">
+        <logger name="org.crazyboy" level="DEBUG" additivity="false">
+            <appender-ref ref="file"/>
+            <appender-ref ref="console"/>
+        </logger>
+    </springProfile>
+</configuration>
