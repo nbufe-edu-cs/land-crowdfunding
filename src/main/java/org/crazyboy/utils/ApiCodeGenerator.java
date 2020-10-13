@@ -31,8 +31,7 @@ public class ApiCodeGenerator {
     private final static String PWD = "123456";
     //要生成的表
     private final static String[] TABLES = {
-            "t_land",
-            "t_land_crowdfunding"
+            "t_land"
     };
 
     public static void main(String[] args) {

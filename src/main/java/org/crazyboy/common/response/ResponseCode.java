@@ -27,8 +27,12 @@ public enum ResponseCode {
      * land
      */
     L_SAVE_ERR(101, "土地信息保存失败"),
-    L_NOT_EXIST(102, "土地不存在")
-    ;
+    L_NOT_EXIST(102, "土地不存在"),
+    L_UPDATE_ERR(103, "土地信息更新失败"),
+    /**
+     * land crowdfunding
+     */
+    L_C_PARTICIPATE_ERR(201, "参与众筹失败");
 
     public int code;
     public String msg;

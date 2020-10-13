@@ -1,5 +1,6 @@
 package org.crazyboy.service;
 
+import org.crazyboy.common.response.ResponseResult;
 import org.crazyboy.entity.LandCrowdfunding;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -13,4 +14,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ILandCrowdfundingService extends IService<LandCrowdfunding> {
 
+    /**
+     * 参加众筹
+     *
+     * @param landCrowdfunding
+     * @return
+     */
+    ResponseResult participateInCrowdfunding(LandCrowdfunding landCrowdfunding);
 }

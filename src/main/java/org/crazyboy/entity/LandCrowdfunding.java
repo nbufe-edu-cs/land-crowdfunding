@@ -2,6 +2,7 @@ package org.crazyboy.entity;
 
 import java.time.LocalDateTime;
 import java.io.Serializable;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -19,7 +20,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class LandCrowdfunding implements Serializable {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * 土地id
@@ -29,7 +30,7 @@ public class LandCrowdfunding implements Serializable {
     /**
      * 参与者id
      */
-    private Integer partnetId;
+    private Integer partnerId;
 
     /**
      * 参与份额
