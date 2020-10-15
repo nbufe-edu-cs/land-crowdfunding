@@ -44,7 +44,7 @@ public class LandCrowdfundingServiceImpl extends ServiceImpl<LandCrowdfundingMap
     public ResponseResult participateInCrowdfunding(LandCrowdfunding landCrowdfunding) {
         Land land = (Land) landService.getLandById(landCrowdfunding.getLandId()).getData();
         if (ObjectUtil.isEmpty(land)) {
-            return ResponseResult.error(ResponseCode.L_NOT_EXIST.getCode(), ResponseCode.L_NOT_EXIST.getMsg());
+            return ResponseResult.error(ResponseCode.L_NOT_EXIST);
         }
         float share = Float.parseFloat(landCrowdfunding.getShare());
         float targetAmount = Float.parseFloat(land.getTargetAmount());
@@ -61,7 +61,6 @@ public class LandCrowdfundingServiceImpl extends ServiceImpl<LandCrowdfundingMap
             landService.updateLand(land);
             return ResponseResult.success("OK");
         }
-        return ResponseResult.error(
-                ResponseCode.L_C_PARTICIPATE_ERR.getCode(), ResponseCode.L_C_PARTICIPATE_ERR.getMsg());
+        return ResponseResult.error(ResponseCode.L_C_PARTICIPATE_ERR);
     }
 }
