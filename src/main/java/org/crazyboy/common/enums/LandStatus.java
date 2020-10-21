@@ -16,10 +16,8 @@ public enum LandStatus {
     /**
      * 土地状态
      */
-    UNPUBLISHED(0),
-    PUBLISHED(1),
-    FINISHED(2)
+    UNPUBLISHED,
+    PUBLISHED,
+    FINISHED,
     ;
-
-    public int status;
 }

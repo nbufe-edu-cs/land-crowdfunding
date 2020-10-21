@@ -32,6 +32,10 @@ public class ResponseResult<T> implements Serializable {
         return new ResponseResult<T>(ResponseCode.SUCCESS.getCode(), msg);
     }
 
+    public static <T> ResponseResult<T> success(ResponseCode responseCode) {
+        return new ResponseResult<>(responseCode.getCode(), responseCode.getMsg());
+    }
+
     public static <T> ResponseResult<T> success(int code, String msg) {
         return new ResponseResult<T>(code, msg);
     }
@@ -42,6 +46,10 @@ public class ResponseResult<T> implements Serializable {
 
     public static <T> ResponseResult<T> error() {
         return new ResponseResult<>(ResponseCode.ERROR.getCode(), ResponseCode.ERROR.getMsg());
+    }
+
+    public static <T> ResponseResult<T> error(ResponseCode responseCode) {
+        return new ResponseResult<>(responseCode.getCode(), responseCode.getMsg());
     }
 
     public static <T> ResponseResult<T> error(int code, String msg) {
