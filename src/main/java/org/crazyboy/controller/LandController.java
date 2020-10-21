@@ -95,8 +95,23 @@ public class LandController {
             @RequestParam(value = "index", defaultValue = "1") Integer index,
             @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
             @RequestParam("userId") Integer userId,
-            @RequestParam("status") Integer status) {
+            @RequestParam(value = "status", required = false) Integer status) {
         return landService.listLand(index, pageSize, userId, status);
+    }
+
+    /**
+     * 根据土地名字模糊搜索土地
+     *
+     * @param index
+     * @param pageSize
+     * @param landName
+     * @return
+     */
+    @PostMapping
+    public ResponseResult searchLandByLandName(@RequestParam(value = "index", defaultValue = "1") Integer index,
+                                               @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
+                                               @RequestParam("landName") String landName) {
+        return landService.searchLandByLandName(index, pageSize, landName);
     }
 
 }

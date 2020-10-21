@@ -37,7 +37,7 @@
     <!--    </root>-->
     <springProfile name="dev">
         <logger name="org.crazyboy" level="DEBUG" additivity="false">
-<!--            <appender-ref ref="file"/>-->
+            <!--            <appender-ref ref="file"/>-->
             <appender-ref ref="console"/>
         </logger>
     </springProfile>
