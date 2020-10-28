@@ -1,13 +1,12 @@
-package org.crazyboy.entity;
+package org.crazyboy.vo;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.io.Serializable;
-
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -20,7 +19,7 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-public class Land implements Serializable {
+public class LandVO implements Serializable {
 
     private static final long serialVersionUID=1L;
 
@@ -82,22 +81,22 @@ public class Land implements Serializable {
     /**
      * 开始时间
      */
-    private LocalDate startDate;
+    private String startDate;
 
     /**
      * 结束时间
      */
-    private LocalDate endDate;
+    private String endDate;
 
     /**
      * 创建时间
      */
-    private LocalDateTime createTime;
+    private String createTime;
 
     /**
      * 更新时间
      */
-    private LocalDateTime updateTime;
+    private String updateTime;
 
 
 }

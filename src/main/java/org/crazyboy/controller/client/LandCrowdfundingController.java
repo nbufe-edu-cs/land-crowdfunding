@@ -1,6 +1,7 @@
-package org.crazyboy.controller;
+package org.crazyboy.controller.client;
 
 
+import io.swagger.annotations.ApiOperation;
 import org.crazyboy.common.response.ResponseResult;
 import org.crazyboy.entity.LandCrowdfunding;
 import org.crazyboy.service.ILandCrowdfundingService;
@@ -21,7 +22,7 @@ import javax.annotation.Resource;
  * @since 2020-09-25
  */
 @RestController
-@RequestMapping("/crowdfunding")
+@RequestMapping("/land/crowdfunding")
 public class LandCrowdfundingController {
 
     @Resource
@@ -33,6 +34,7 @@ public class LandCrowdfundingController {
      * @param landCrowdfunding
      * @return
      */
+    @ApiOperation("参加众筹")
     @PostMapping
     public ResponseResult participateInCrowdfunding(@RequestBody LandCrowdfunding landCrowdfunding) {
         return landCrowdfundingService.participateInCrowdfunding(landCrowdfunding);

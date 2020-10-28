@@ -31,7 +31,9 @@ public class ApiCodeGenerator {
     private final static String PWD = "123456";
     //要生成的表
     private final static String[] TABLES = {
-            "t_land"
+            "land_manage_mode",
+            "land_product",
+            "land_plant_food"
     };
 
     public static void main(String[] args) {
@@ -102,7 +104,7 @@ public class ApiCodeGenerator {
         // strategy.setSuperControllerClass("com.silexlink.huawei.controller");
         // 写于父类中的公共字段
         // strategy.setSuperEntityColumns("id");
-        // strategy.setInclude(TABLES);
+        strategy.setInclude(TABLES);
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setTablePrefix(pc.getModuleName() + "_");
         mpg.setStrategy(strategy);

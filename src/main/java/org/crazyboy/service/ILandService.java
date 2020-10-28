@@ -71,12 +71,29 @@ public interface ILandService extends IService<Land> {
     ResponseResult updateLand(Land land);
 
     /**
-     * 根据土地名字模糊搜索土地
+     * 根据土地名称模糊查询
      *
      * @param index
      * @param pageSize
      * @param landName
      * @return
      */
-    ResponseResult<MyPage<List<Land>>> searchLandByLandName(Integer index, Integer pageSize, String landName);
+    ResponseResult searchLandByLandName(Integer index, Integer pageSize, String landName);
+
+    /**
+     * 修改土地状态
+     *
+     * @param landId
+     * @param status
+     * @return
+     */
+    ResponseResult updateLandStatus(String landId, Integer status);
+
+    /**
+     * 获取所有土地列表
+     *
+     * @param status
+     * @return
+     */
+    ResponseResult listAllLand(Integer status);
 }

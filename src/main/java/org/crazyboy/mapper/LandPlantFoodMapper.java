@@ -1,0 +1,18 @@
+package org.crazyboy.mapper;
+
+import org.apache.ibatis.annotations.Mapper;
+import org.crazyboy.entity.LandPlantFood;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+/**
+ * <p>
+ * 土地种植原料表 Mapper 接口
+ * </p>
+ *
+ * @author Kevin
+ * @since 2020-10-28
+ */
+@Mapper
+public interface LandPlantFoodMapper extends BaseMapper<LandPlantFood> {
+
+}

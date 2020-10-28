@@ -1,4 +1,4 @@
-package org.crazyboy.controller;
+package org.crazyboy.controller.manage;
 
 
 import org.crazyboy.common.response.ResponseResult;
@@ -21,8 +21,8 @@ import java.util.List;
  * @since 2020-09-25
  */
 @RestController
-@RequestMapping("/land")
-public class LandController {
+@RequestMapping("/land/manage")
+public class ManageLandController {
 
     @Resource
     private ILandService landService;
@@ -33,9 +33,8 @@ public class LandController {
      * @return
      */
     @PostMapping("/upload/img/cover")
-    public ResponseResult uploadLandCoverImg(
-            @RequestParam("cover") MultipartFile multipartFile,
-            @RequestParam("landId") String landId) throws IOException {
+    public ResponseResult uploadLandCoverImg(@RequestParam("cover") MultipartFile multipartFile,
+                                             @RequestParam("landId") String landId) throws IOException {
         return landService.uploadLandCoverImg(multipartFile, landId);
     }
 
@@ -60,6 +59,19 @@ public class LandController {
     public ResponseResult getLandById(@RequestParam("landId") String landId) {
         return landService.getLandById(landId);
     }
+
+    /**
+     * 更改土地状态
+     *
+     * @param status
+     * @return
+     */
+    @PostMapping("/status")
+    public ResponseResult updateLandStatus(@RequestParam("landId") String landId,
+                                           @RequestParam("status") Integer status) {
+        return landService.updateLandStatus(landId, status);
+    }
+
 
     /**
      * 修改土地信息
@@ -107,7 +119,7 @@ public class LandController {
      * @param landName
      * @return
      */
-    @PostMapping
+    @PostMapping("/search")
     public ResponseResult searchLandByLandName(@RequestParam(value = "index", defaultValue = "1") Integer index,
                                                @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
                                                @RequestParam("landName") String landName) {

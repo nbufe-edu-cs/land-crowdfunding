@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.crazyboy.common.constants.Qiniu;
 import org.crazyboy.common.enums.LandStatus;
 import org.crazyboy.common.response.ResponseCode;
@@ -16,9 +17,10 @@ import org.crazyboy.mapper.LandMapper;
 import org.crazyboy.model.MyPage;
 import org.crazyboy.service.ILandService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.crazyboy.utils.CommonUtils;
 import org.crazyboy.utils.qiniu.OSSUtil;
+import org.crazyboy.vo.LandVO;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -46,6 +48,9 @@ public class LandServiceImpl extends ServiceImpl<LandMapper, Land> implements IL
     @Resource
     private OSSUtil ossUtil;
 
+    @Resource
+    private CommonUtils commonUtils;
+
     /**
      * 添加土地
      *
@@ -55,7 +60,8 @@ public class LandServiceImpl extends ServiceImpl<LandMapper, Land> implements IL
     @Override
     public ResponseResult saveLand(Land land) {
         land.setLandId(IdUtil.simpleUUID());
-        land.setStatus(LandStatus.UNPUBLISHED.getStatus());
+        land.setUserId(1);
+        land.setStatus(LandStatus.UNPUBLISHED.ordinal());
         land.setCurrentAmount(String.valueOf(0));
         land.setProgress(String.valueOf(0));
         land.setCreateTime(LocalDateTime.now());
@@ -111,7 +117,34 @@ public class LandServiceImpl extends ServiceImpl<LandMapper, Land> implements IL
         if (ObjectUtil.isEmpty(land)) {
             return ResponseResult.error(ResponseCode.L_NOT_EXIST.getCode(), ResponseCode.L_NOT_EXIST.getMsg());
         }
-        return ResponseResult.success("OK", land);
+        return ResponseResult.success("OK", voLand(land));
+    }
+
+
+    /**
+     * 封装land对象
+     *
+     * @param land
+     * @return
+     */
+    private LandVO voLand(Land land) {
+        LandVO landVO = new LandVO();
+        landVO.setLandId(land.getLandId());
+        landVO.setLandName(land.getLandName());
+        landVO.setLandDesc(land.getLandDesc());
+        landVO.setLandAddress(land.getLandAddress());
+        landVO.setLandArea(land.getLandArea());
+        landVO.setTargetAmount(land.getTargetAmount());
+        landVO.setCurrentAmount(land.getCurrentAmount());
+        landVO.setProgress(land.getProgress());
+        landVO.setCoverImg(land.getCoverImg());
+        landVO.setStatus(land.getStatus());
+        landVO.setUserId(land.getUserId());
+        landVO.setStartDate(commonUtils.localDate2String(land.getStartDate()));
+        landVO.setEndDate(commonUtils.localDate2String(land.getEndDate()));
+        landVO.setCreateTime(commonUtils.localDateTime2String(land.getCreateTime()));
+        landVO.setUpdateTime(commonUtils.localDateTime2String(land.getUpdateTime()));
+        return landVO;
     }
 
     /**
@@ -180,12 +213,45 @@ public class LandServiceImpl extends ServiceImpl<LandMapper, Land> implements IL
      */
     @Override
     public ResponseResult<MyPage<List<Land>>> searchLandByLandName(Integer index, Integer pageSize, String landName) {
-//        Page<Land> page = new Page<>(index, pageSize);
-//        IPage<Land> iPage = landMapper.selectPage(page, new QueryWrapper<Land>().like("land_name", landName));
-//        MyPage<List<Land>> myPage = new MyPage<>(iPage.getRecords(), index, iPage.getPages(), iPage.getTotal());
-//        return ResponseResult.success("OK", myPage);
-        return null;
+        Page<Land> page = new Page<>(index, pageSize);
+        IPage<Land> iPage = landMapper.selectPage(page, new QueryWrapper<Land>().like("land_name", landName));
+        MyPage<List<Land>> myPage = new MyPage<>(iPage.getRecords(), index, iPage.getPages(), iPage.getTotal());
+        return ResponseResult.success("OK", myPage);
     }
 
+    /**
+     * 修改土地状态
+     *
+     * @param status
+     * @return
+     */
+    @Override
+    public ResponseResult updateLandStatus(String landId, Integer status) {
+        Land land = getOne(new LambdaQueryWrapper<Land>().eq(Land::getLandId, landId));
+        if (ObjectUtil.isEmpty(land)) {
+            return ResponseResult.error(ResponseCode.L_NOT_EXIST.getCode(), ResponseCode.L_NOT_EXIST.getMsg());
+        }
+        land.setStatus(status);
+        if (update(land, new LambdaQueryWrapper<Land>().eq(Land::getLandId, landId))) {
+            return ResponseResult.success("OK");
+        }
+        return ResponseResult.error(ResponseCode.L_UPDATE_ERR.getCode(), ResponseCode.L_UPDATE_ERR.getMsg());
+    }
+
+    /**
+     * 获取所有土地列表
+     *
+     * @param status
+     * @return
+     */
+    @Override
+    public ResponseResult listAllLand(Integer status) {
+        LambdaQueryWrapper<Land> queryWrapper = new LambdaQueryWrapper<>();
+        if (!ObjectUtil.isEmpty(status)) {
+            queryWrapper.eq(Land::getStatus, status);
+        }
+        List<Land> landList = list(queryWrapper);
+        return ResponseResult.success("OK", landList);
+    }
 
 }
