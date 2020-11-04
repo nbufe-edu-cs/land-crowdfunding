@@ -40,26 +40,27 @@ public class ManageLandProductController {
     /**
      * 获取土地种植农产品列表
      *
+     * @param landId
      * @return
      */
     @ApiOperation("获取土地种植农产品列表")
     @GetMapping
-    public ResponseResult listLandProduct() {
-        return landProductService.listLandProduct();
+    public ResponseResult listLandProduct(String landId) {
+        return landProductService.listLandProduct(landId);
     }
 
     /**
      * 删除土地种植农产品
      *
-     * @param productId
+     * @param landId
+     * @param productName
      * @return
      */
     @ApiOperation("删除土地种植农产品")
     @DeleteMapping
-    public ResponseResult deleteLandProduct(@RequestParam("productId") Integer productId) {
-        return landProductService.deleteLandProduct(productId);
+    public ResponseResult deleteLandProduct(String landId, String productName) {
+        return landProductService.deleteLandProduct(landId, productName);
     }
-
 
 }
 

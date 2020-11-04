@@ -4,6 +4,8 @@ import org.crazyboy.common.response.ResponseResult;
 import org.crazyboy.entity.LandProduct;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  * 土地种植农场品类表 服务类
@@ -25,15 +27,17 @@ public interface ILandProductService extends IService<LandProduct> {
     /**
      * 获取土地种植农产品列表
      *
+     * @param landId
      * @return
      */
-    ResponseResult listLandProduct();
+    ResponseResult<List<LandProduct>> listLandProduct(String landId);
 
     /**
      * 删除土地种植农产品
      *
-     * @param productId
+     * @param landId
+     * @param productName
      * @return
      */
-    ResponseResult deleteLandProduct(Integer productId);
+    ResponseResult deleteLandProduct(String landId, String productName);
 }

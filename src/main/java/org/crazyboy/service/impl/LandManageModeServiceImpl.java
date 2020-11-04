@@ -29,7 +29,7 @@ public class LandManageModeServiceImpl extends ServiceImpl<LandManageModeMapper,
     public ResponseResult saveLandManageMode(LandManageMode landManageMode) {
         LandManageMode manageMode = getOne(new LambdaQueryWrapper<LandManageMode>()
                 .eq(LandManageMode::getModeName, landManageMode.getModeName())
-                .eq(LandManageMode::getUserId, landManageMode.getUserId()));
+                .eq(LandManageMode::getLandId, landManageMode.getLandId()));
         if (!ObjectUtil.isEmpty(manageMode)) {
             return ResponseResult.error(ResponseCode.L_M_M_EXIST.getCode(), ResponseCode.L_M_M_EXIST.getMsg());
         }
@@ -42,26 +42,33 @@ public class LandManageModeServiceImpl extends ServiceImpl<LandManageModeMapper,
     /**
      * 获取土地管理模式列表
      *
+     * @param landId
      * @return
      */
     @Override
-    public ResponseResult listLandManageMode() {
-        return ResponseResult.success("OK", list());
+    public ResponseResult listLandManageMode(String landId) {
+        return ResponseResult.success("OK", list(new LambdaQueryWrapper<LandManageMode>()
+                .eq(LandManageMode::getLandId, landId)));
     }
 
     /**
      * 删除土地管理模式
      *
-     * @param landManageModeId
+     * @param landId
+     * @param modeName
      * @return
      */
     @Override
-    public ResponseResult deleteLandManageMode(Integer landManageModeId) {
-        LandManageMode landManageMode = getById(landManageModeId);
+    public ResponseResult deleteLandManageMode(String landId, String modeName) {
+        LandManageMode landManageMode = getOne(new LambdaQueryWrapper<LandManageMode>()
+                .eq(LandManageMode::getLandId, landId)
+                .eq(LandManageMode::getModeName, modeName));
         if (ObjectUtil.isEmpty(landManageMode)) {
             return ResponseResult.error(ResponseCode.L_M_M_NOT_EXIST.getCode(), ResponseCode.L_M_M_NOT_EXIST.getMsg());
         }
-        if (removeById(landManageModeId)) {
+        if (remove(new LambdaQueryWrapper<LandManageMode>()
+                .eq(LandManageMode::getLandId, landId)
+                .eq(LandManageMode::getModeName, modeName))) {
             return ResponseResult.success("OK");
         }
         return ResponseResult.error(ResponseCode.L_M_M_DEL_ERR.getCode(), ResponseCode.L_M_M_DEL_ERR.getMsg());

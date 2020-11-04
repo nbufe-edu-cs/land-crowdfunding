@@ -1,5 +1,6 @@
 package org.crazyboy.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -13,8 +14,12 @@ import org.crazyboy.common.enums.LandStatus;
 import org.crazyboy.common.response.ResponseCode;
 import org.crazyboy.common.response.ResponseResult;
 import org.crazyboy.entity.Land;
+import org.crazyboy.entity.LandPlantFood;
+import org.crazyboy.entity.LandProduct;
 import org.crazyboy.mapper.LandMapper;
 import org.crazyboy.model.MyPage;
+import org.crazyboy.service.ILandPlantFoodService;
+import org.crazyboy.service.ILandProductService;
 import org.crazyboy.service.ILandService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.crazyboy.utils.CommonUtils;
@@ -26,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +56,12 @@ public class LandServiceImpl extends ServiceImpl<LandMapper, Land> implements IL
 
     @Resource
     private CommonUtils commonUtils;
+
+    @Resource
+    private ILandProductService productService;
+
+    @Resource
+    private ILandPlantFoodService plantFoodService;
 
     /**
      * 添加土地
@@ -89,40 +101,55 @@ public class LandServiceImpl extends ServiceImpl<LandMapper, Land> implements IL
                     ResponseCode.Q_OSS_UPLOAD_ERR.getCode(), ResponseCode.Q_OSS_UPLOAD_ERR.getMsg());
         }
         String coveImgUrl = Qiniu.OSS_DEFAULT_DOMAIN + fileName;
-        log.info("save cover image successfully");
-        log.info("image cdn xddress ------> " + coveImgUrl);
+        log.info("SAVE COVER IMAGE SUCCESS");
+        log.info("IMAGE CDN ADDRESS ------> " + coveImgUrl);
         Land land = getOne(new LambdaQueryWrapper<Land>().eq(Land::getLandId, landId));
         if (ObjectUtil.isEmpty(land)) {
             return ResponseResult.error(ResponseCode.L_NOT_EXIST.getCode(), ResponseCode.L_SAVE_ERR.getMsg());
         }
         land.setCoverImg(coveImgUrl);
         if (update(land, new LambdaQueryWrapper<Land>().eq(Land::getLandId, landId))) {
-            return ResponseResult.success("Saved cover image successful", coveImgUrl);
+            return ResponseResult.success("SAVED COVER IMAGE SUCCESS", coveImgUrl);
         } else {
             ossUtil.deleteObject(fileName);
-            log.info("delete cover image " + coveImgUrl + " from qiniu OSS");
+            log.info("DELETE COVER IMAGE " + coveImgUrl + " FROM QINIU OSS");
             return ResponseResult.error(ResponseCode.L_NOT_EXIST.getCode(), ResponseCode.L_SAVE_ERR.getMsg());
         }
     }
 
     /**
-     * 根据土地信息查询土地id
+     * Get land information by land id
      *
-     * @param landId 土地id
+     * @param landId land id
      * @return
      */
     @Override
-    public ResponseResult getLandById(String landId) {
+    public ResponseResult<Map<String, Object>> getLandById(String landId) {
+        Map<String, Object> result = new HashMap<>();
         Land land = getOne(new LambdaQueryWrapper<Land>().eq(Land::getLandId, landId));
         if (ObjectUtil.isEmpty(land)) {
             return ResponseResult.error(ResponseCode.L_NOT_EXIST.getCode(), ResponseCode.L_NOT_EXIST.getMsg());
         }
-        return ResponseResult.success("OK", voLand(land));
+        result.put("land", voLand(land));
+        List<LandProduct> landProductList = productService.listLandProduct(landId).getData();
+        List<Map<String, Object>> productList = new ArrayList<>();
+        landProductList.forEach(item -> {
+            Map<String, Object> productWithPlantFood = new HashMap<>();
+            productWithPlantFood.put("product", item);
+            List<LandPlantFood> landPlantFoods =
+                    plantFoodService.getLandPlantFoodByProduct(item.getProductId()).getData();
+            if (!CollectionUtil.isEmpty(landPlantFoods)) {
+                productWithPlantFood.put("plantFoodList", landPlantFoods);
+            }
+            productList.add(productWithPlantFood);
+        });
+        result.put("options", productList);
+        return ResponseResult.success("OK", result);
     }
 
 
     /**
-     * 封装land对象
+     * vo land object
      *
      * @param land
      * @return
@@ -245,7 +272,7 @@ public class LandServiceImpl extends ServiceImpl<LandMapper, Land> implements IL
      * @return
      */
     @Override
-    public ResponseResult listAllLand(Integer status) {
+    public ResponseResult<List<Land>> listAllLand(Integer status) {
         LambdaQueryWrapper<Land> queryWrapper = new LambdaQueryWrapper<>();
         if (!ObjectUtil.isEmpty(status)) {
             queryWrapper.eq(Land::getStatus, status);

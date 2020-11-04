@@ -24,15 +24,17 @@ public interface ILandManageModeService extends IService<LandManageMode> {
     /**
      * 获取土地管理模式列表
      *
+     * @param landId
      * @return
      */
-    ResponseResult listLandManageMode();
+    ResponseResult listLandManageMode(String landId);
 
     /**
      * 删除土地管理模式
      *
-     * @param landManageModeId
+     * @param landId
+     * @param modeName
      * @return
      */
-    ResponseResult deleteLandManageMode(Integer landManageModeId);
+    ResponseResult deleteLandManageMode(String landId, String modeName);
 }

@@ -24,20 +24,28 @@ public class LandPlantFood implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * id
-     */
-    @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
-
-    /**
      * 化肥原料
      */
     private String plantFood;
 
     /**
-     * 用户id
+     * 土地id
      */
-    private Integer userId;
+    private String landId;
 
+    /**
+     * 单价
+     */
+    private String price;
+
+    /**
+     * 数量
+     */
+    private Integer num;
+
+    /**
+     * 使用的农产品id
+     */
+    private String productId;
 
 }

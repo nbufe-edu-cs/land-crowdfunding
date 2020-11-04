@@ -24,20 +24,19 @@ public class LandManageMode implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * id
-     */
-    @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
-
-    /**
      * 管理模式名称
      */
     private String modeName;
 
     /**
-     * 用户id
+     * 土地id
      */
-    private Integer userId;
+    private String landId;
+
+    /**
+     * 价格
+     */
+    private String price;
 
 
 }

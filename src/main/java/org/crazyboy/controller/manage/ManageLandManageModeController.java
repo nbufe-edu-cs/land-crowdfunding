@@ -39,25 +39,27 @@ public class ManageLandManageModeController {
     /**
      * 获取土地管理模式列表
      *
+     * @param landId
      * @return
      */
     @ApiOperation("获取土地管理模式列表")
     @GetMapping
-    public ResponseResult listLandManageMode() {
-        return landManageModeService.listLandManageMode();
+    public ResponseResult listLandManageMode(String landId) {
+        return landManageModeService.listLandManageMode(landId);
     }
 
     /**
      * 删除土地管理模式
      *
-     * @param landManageModeId
+     * @param landId
+     * @param modeName
      * @return
      */
     @ApiOperation("删除土地管理模式")
     @DeleteMapping
-    public ResponseResult deleteLandManageMode(@RequestParam("landManageModeId") Integer landManageModeId) {
-        return landManageModeService.deleteLandManageMode(landManageModeId);
+    public ResponseResult deleteLandManageMode(String landId, String modeName) {
+        return landManageModeService.deleteLandManageMode(landId, modeName);
     }
 
-}
+} 
 
