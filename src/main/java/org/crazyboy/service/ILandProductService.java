@@ -35,9 +35,16 @@ public interface ILandProductService extends IService<LandProduct> {
     /**
      * 删除土地种植农产品
      *
-     * @param landId
-     * @param productName
+     * @param productId
      * @return
      */
-    ResponseResult deleteLandProduct(String landId, String productName);
+    ResponseResult deleteLandProduct(String productId);
+
+    /**
+     * 修改土地种植农产品
+     *
+     * @param landProduct
+     * @return
+     */
+    ResponseResult updateLandProduct(LandProduct landProduct);
 }

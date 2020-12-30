@@ -4,7 +4,6 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.crazyboy.common.response.ResponseCode;
 import org.crazyboy.common.response.ResponseResult;
-import org.crazyboy.entity.Land;
 import org.crazyboy.entity.LandFavorites;
 import org.crazyboy.mapper.LandFavoritesMapper;
 import org.crazyboy.service.ILandFavoritesService;
@@ -90,7 +89,7 @@ public class LandFavoritesServiceImpl extends ServiceImpl<LandFavoritesMapper, L
         List<LandVO> result = new ArrayList<>();
         List<String> landIdLst = landFavoritesMapper.selectLandIdListByUserId(userId);
         landIdLst.forEach(landId -> {
-            result.add((LandVO) landService.getLandById(landId).getData());
+            result.add((LandVO) landService.getLandInfo(landId).getData());
         });
         return ResponseResult.success("OK", result);
     }

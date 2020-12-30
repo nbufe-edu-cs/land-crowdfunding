@@ -58,8 +58,20 @@ public class ManageLandProductController {
      */
     @ApiOperation("删除土地种植农产品")
     @DeleteMapping
-    public ResponseResult deleteLandProduct(String landId, String productName) {
-        return landProductService.deleteLandProduct(landId, productName);
+    public ResponseResult deleteLandProduct(String productId) {
+        return landProductService.deleteLandProduct(productId);
+    }
+
+    /**
+     * 修改土地种植农产品
+     *
+     * @param landProduct
+     * @return
+     */
+    @ApiOperation("修改土地种植农产品")
+    @PutMapping
+    public ResponseResult updateLandProduct(@RequestBody LandProduct landProduct) {
+        return landProductService.updateLandProduct(landProduct);
     }
 
 }

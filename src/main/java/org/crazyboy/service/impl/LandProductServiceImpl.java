@@ -59,23 +59,40 @@ public class LandProductServiceImpl extends ServiceImpl<LandProductMapper, LandP
     /**
      * 删除土地种植农产品
      *
-     * @param landId
-     * @param productName
+     * @param productId
      * @return
      */
     @Override
-    public ResponseResult deleteLandProduct(String landId, String productName) {
+    public ResponseResult deleteLandProduct(String productId) {
         LandProduct landProduct = getOne(new LambdaQueryWrapper<LandProduct>()
-                .eq(LandProduct::getLandId, landId)
-                .eq(LandProduct::getProductName, productName));
+                .eq(LandProduct::getProductId, productId));
         if (ObjectUtil.isEmpty(landProduct)) {
             return ResponseResult.error(ResponseCode.L_P_NOT_EXIST.getCode(), ResponseCode.L_P_NOT_EXIST.getMsg());
         }
         if (remove(new LambdaQueryWrapper<LandProduct>()
-                .eq(LandProduct::getLandId, landId)
-                .eq(LandProduct::getProductName, productName))) {
+                .eq(LandProduct::getProductId, productId))) {
             return ResponseResult.success("OK");
         }
         return ResponseResult.error(ResponseCode.L_P_DEL_ERR.getCode(), ResponseCode.L_P_DEL_ERR.getMsg());
     }
+
+    /**
+     * 修改土地种植农产品
+     *
+     * @param landProduct
+     * @return
+     */
+    @Override
+    public ResponseResult updateLandProduct(LandProduct landProduct) {
+        try {
+            update(landProduct, new LambdaQueryWrapper<LandProduct>()
+                    .eq(LandProduct::getProductId, landProduct.getProductId()));
+            return ResponseResult.success("OK");
+        } catch (Exception e) {
+            return ResponseResult.error(ResponseCode.ERROR.getCode(), ResponseCode.ERROR.getMsg());
+        }
+
+    }
+
+
 }

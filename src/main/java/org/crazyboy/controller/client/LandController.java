@@ -42,6 +42,6 @@ public class LandController {
     @ApiOperation("获取土地详情")
     @GetMapping("/detail")
     public ResponseResult getLandById(@RequestParam(value = "landId") String landId) {
-        return landService.getLandById(landId);
+        return landService.getLandInfo(landId);
     }
 }

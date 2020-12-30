@@ -1,8 +1,14 @@
 server:
   port: 8081
 
+#logging:
+#  config: classpath:logback-spring1.xml
 logging:
-  config: classpath:logback-spring.xml
+  pattern:
+    console: "%d - [%thread] - %msg%n"
+  level:
+    web: info, error, debug
+    net.zaito.crm: error, info, debug
 
 spring:
   profiles:
@@ -27,4 +33,4 @@ mybatis-plus:
   mapper-locations: classpath:mapper/*Mapper.xml
   configuration:
     map-underscore-to-camel-case: true
-    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

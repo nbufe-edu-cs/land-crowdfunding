@@ -29,6 +29,8 @@ public enum ResponseCode {
     L_SAVE_ERR(100, "土地信息保存失败"),
     L_NOT_EXIST(101, "土地不存在"),
     L_UPDATE_ERR(102, "土地信息更新失败"),
+    L_PUBLISHING(103, "土地众筹进行中无法删除"),
+    L_NOT_REACHED(104, "众筹未达目标金额，无法结束"),
     /**
      * land crowdfunding
      */

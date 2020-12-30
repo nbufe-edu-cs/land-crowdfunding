@@ -15,10 +15,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class LandCrowdfundingApplication {
     public static void main(String[] args) {
-        try {
-            SpringApplication.run(LandCrowdfundingApplication.class, args);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        SpringApplication.run(LandCrowdfundingApplication.class, args);
     }
 }

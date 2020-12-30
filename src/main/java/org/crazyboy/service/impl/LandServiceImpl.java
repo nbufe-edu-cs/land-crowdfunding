@@ -8,7 +8,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.crazyboy.common.constants.Qiniu;
 import org.crazyboy.common.enums.LandStatus;
 import org.crazyboy.common.response.ResponseCode;
@@ -30,7 +29,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -76,12 +74,12 @@ public class LandServiceImpl extends ServiceImpl<LandMapper, Land> implements IL
         land.setStatus(LandStatus.UNPUBLISHED.ordinal());
         land.setCurrentAmount(String.valueOf(0));
         land.setProgress(String.valueOf(0));
-        land.setCreateTime(LocalDateTime.now());
-        land.setUpdateTime(LocalDateTime.now());
+        land.setCreateTime(commonUtils.getCurrentTimestamp());
+        land.setUpdateTime(commonUtils.getCurrentTimestamp());
         if (save(land)) {
             Map<String, Object> result = new HashMap<>();
             result.put("landId", land.getLandId());
-            return ResponseResult.success("Saved land information successfully", result);
+            return ResponseResult.success("OK", result);
         } else {
             return ResponseResult.error(ResponseCode.L_SAVE_ERR.getCode(), ResponseCode.L_SAVE_ERR.getMsg());
         }
@@ -109,7 +107,7 @@ public class LandServiceImpl extends ServiceImpl<LandMapper, Land> implements IL
         }
         land.setCoverImg(coveImgUrl);
         if (update(land, new LambdaQueryWrapper<Land>().eq(Land::getLandId, landId))) {
-            return ResponseResult.success("SAVED COVER IMAGE SUCCESS", coveImgUrl);
+            return ResponseResult.success("OK", coveImgUrl);
         } else {
             ossUtil.deleteObject(fileName);
             log.info("DELETE COVER IMAGE " + coveImgUrl + " FROM QINIU OSS");
@@ -124,7 +122,7 @@ public class LandServiceImpl extends ServiceImpl<LandMapper, Land> implements IL
      * @return
      */
     @Override
-    public ResponseResult<Map<String, Object>> getLandById(String landId) {
+    public ResponseResult<Map<String, Object>> getLandInfo(String landId) {
         Map<String, Object> result = new HashMap<>();
         Land land = getOne(new LambdaQueryWrapper<Land>().eq(Land::getLandId, landId));
         if (ObjectUtil.isEmpty(land)) {
@@ -167,10 +165,10 @@ public class LandServiceImpl extends ServiceImpl<LandMapper, Land> implements IL
         landVO.setCoverImg(land.getCoverImg());
         landVO.setStatus(land.getStatus());
         landVO.setUserId(land.getUserId());
-        landVO.setStartDate(commonUtils.localDate2String(land.getStartDate()));
-        landVO.setEndDate(commonUtils.localDate2String(land.getEndDate()));
-        landVO.setCreateTime(commonUtils.localDateTime2String(land.getCreateTime()));
-        landVO.setUpdateTime(commonUtils.localDateTime2String(land.getUpdateTime()));
+        landVO.setStartDate(commonUtils.formatTimestamp2Date(land.getStartDate()));
+        landVO.setEndDate(commonUtils.formatTimestamp2Date(land.getEndDate()));
+        landVO.setCreateTime(commonUtils.formatTimestamp2Date(land.getCreateTime()));
+        landVO.setUpdateTime(commonUtils.formatTimestamp2Date(land.getUpdateTime()));
         return landVO;
     }
 
@@ -182,11 +180,14 @@ public class LandServiceImpl extends ServiceImpl<LandMapper, Land> implements IL
      */
     @Override
     public ResponseResult delLandById(String landId) {
-        Land land = (Land) getLandById(landId).getData();
+        Land land = getOne(new LambdaQueryWrapper<Land>().eq(Land::getLandId, landId));
         if (ObjectUtil.isEmpty(land)) {
             return ResponseResult.error(ResponseCode.L_NOT_EXIST.getCode(), ResponseCode.L_NOT_EXIST.getMsg());
         }
-        boolean isRemoved = remove(new LambdaQueryWrapper<Land>().eq(Land::getLandId, land));
+        if (land.getStatus().equals(LandStatus.PUBLISHED.ordinal())) {
+            return ResponseResult.error(ResponseCode.L_PUBLISHING.getCode(), ResponseCode.L_PUBLISHING.getMsg());
+        }
+        boolean isRemoved = remove(new LambdaQueryWrapper<Land>().eq(Land::getLandId, land.getLandId()));
         if (isRemoved) {
             return ResponseResult.success("OK");
         } else {
@@ -202,7 +203,7 @@ public class LandServiceImpl extends ServiceImpl<LandMapper, Land> implements IL
      * @return
      */
     @Override
-    public ResponseResult<MyPage<List<Land>>> listLand(Integer index, Integer pageSize,
+    public ResponseResult<MyPage<List<LandVO>>> listLand(Integer index, Integer pageSize,
                                                        Integer userId, Integer status) {
         Page<Land> page = new Page<>(index, pageSize);
         QueryWrapper<Land> queryWrapper = new QueryWrapper<>();
@@ -211,7 +212,11 @@ public class LandServiceImpl extends ServiceImpl<LandMapper, Land> implements IL
         }
         queryWrapper.eq("user_id", userId).orderByDesc("update_time");
         IPage<Land> iPage = landMapper.selectPage(page, queryWrapper);
-        MyPage<List<Land>> result = new MyPage<>(iPage.getRecords(), index, iPage.getPages(), iPage.getTotal());
+        List<LandVO> list = new ArrayList<>();
+        iPage.getRecords().forEach(item -> {
+            list.add(voLand(item));
+        });
+        MyPage<List<LandVO>> result = new MyPage<>(list, index, iPage.getPages(), iPage.getTotal());
         return ResponseResult.success("OK", result);
     }
 
@@ -223,8 +228,8 @@ public class LandServiceImpl extends ServiceImpl<LandMapper, Land> implements IL
      */
     @Override
     public ResponseResult updateLand(Land land) {
-        land.setUpdateTime(LocalDateTime.now());
-        if (updateById(land)) {
+        land.setUpdateTime(commonUtils.getCurrentTimeStamp());
+        if (update(land, new LambdaQueryWrapper<Land>().eq(Land::getLandId, land.getLandId()))) {
             return ResponseResult.success("OK");
         }
         return ResponseResult.error(ResponseCode.L_UPDATE_ERR.getCode(), ResponseCode.L_UPDATE_ERR.getMsg());
@@ -258,6 +263,12 @@ public class LandServiceImpl extends ServiceImpl<LandMapper, Land> implements IL
         if (ObjectUtil.isEmpty(land)) {
             return ResponseResult.error(ResponseCode.L_NOT_EXIST.getCode(), ResponseCode.L_NOT_EXIST.getMsg());
         }
+        if (status.equals(LandStatus.FINISHED.ordinal())) {
+            if (Integer.parseInt(land.getCurrentAmount()) < Integer.parseInt(land.getTargetAmount())) {
+                return ResponseResult.error(
+                        ResponseCode.L_NOT_REACHED.getCode(), ResponseCode.L_NOT_REACHED.getMsg());
+            }
+        }
         land.setStatus(status);
         if (update(land, new LambdaQueryWrapper<Land>().eq(Land::getLandId, landId))) {
             return ResponseResult.success("OK");
@@ -272,13 +283,30 @@ public class LandServiceImpl extends ServiceImpl<LandMapper, Land> implements IL
      * @return
      */
     @Override
-    public ResponseResult<List<Land>> listAllLand(Integer status) {
+    public ResponseResult<List<LandVO>> listAllLand(Integer status) {
         LambdaQueryWrapper<Land> queryWrapper = new LambdaQueryWrapper<>();
         if (!ObjectUtil.isEmpty(status)) {
             queryWrapper.eq(Land::getStatus, status);
         }
         List<Land> landList = list(queryWrapper);
-        return ResponseResult.success("OK", landList);
+        List<LandVO> result = new ArrayList<>();
+        landList.forEach(item -> {
+            result.add(voLand(item));
+        });
+        return ResponseResult.success("OK", result);
+    }
+
+    /**
+     * @param landId
+     * @return
+     */
+    @Override
+    public ResponseResult getLandById(String landId) {
+        Land land = getOne(new LambdaQueryWrapper<Land>().eq(Land::getLandId, landId));
+        if (ObjectUtil.isEmpty(land)) {
+            return ResponseResult.error(ResponseCode.L_NOT_EXIST.getCode(), ResponseCode.L_NOT_EXIST.getMsg());
+        }
+        return ResponseResult.success("OK", land);
     }
 
 }

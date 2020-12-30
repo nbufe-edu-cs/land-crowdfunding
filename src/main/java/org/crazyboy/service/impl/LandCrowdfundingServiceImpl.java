@@ -6,7 +6,6 @@ import org.crazyboy.common.response.ResponseResult;
 import org.crazyboy.entity.Land;
 import org.crazyboy.entity.LandCrowdfunding;
 import org.crazyboy.mapper.LandCrowdfundingMapper;
-import org.crazyboy.mapper.LandMapper;
 import org.crazyboy.service.ILandCrowdfundingService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.crazyboy.service.ILandService;
@@ -42,7 +41,7 @@ public class LandCrowdfundingServiceImpl extends ServiceImpl<LandCrowdfundingMap
      */
     @Override
     public ResponseResult participateInCrowdfunding(LandCrowdfunding landCrowdfunding) {
-        Land land = (Land) landService.getLandById(landCrowdfunding.getLandId()).getData();
+        Land land = (Land) landService.getLandInfo(landCrowdfunding.getLandId()).getData();
         if (ObjectUtil.isEmpty(land)) {
             return ResponseResult.error(ResponseCode.L_NOT_EXIST);
         }

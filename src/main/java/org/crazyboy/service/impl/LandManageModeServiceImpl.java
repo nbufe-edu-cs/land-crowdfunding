@@ -2,6 +2,7 @@ package org.crazyboy.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import org.apache.ibatis.annotations.Param;
 import org.crazyboy.common.response.ResponseCode;
 import org.crazyboy.common.response.ResponseResult;
 import org.crazyboy.entity.LandManageMode;
@@ -9,6 +10,8 @@ import org.crazyboy.mapper.LandManageModeMapper;
 import org.crazyboy.service.ILandManageModeService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * <p>
@@ -46,8 +49,8 @@ public class LandManageModeServiceImpl extends ServiceImpl<LandManageModeMapper,
      * @return
      */
     @Override
-    public ResponseResult listLandManageMode(String landId) {
-        return ResponseResult.success("OK", list(new LambdaQueryWrapper<LandManageMode>()
+    public ResponseResult getLandManageMode(String landId) {
+        return ResponseResult.success("OK", getOne(new LambdaQueryWrapper<LandManageMode>()
                 .eq(LandManageMode::getLandId, landId)));
     }
 

@@ -1,5 +1,6 @@
 package org.crazyboy.utils.qiniu;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.json.JSONUtil;
 import com.qiniu.common.QiniuException;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
@@ -100,7 +102,7 @@ public class OSSUtil {
      * @return a new name for this MultipartFile
      */
     private String getFileKey(MultipartFile file) {
-        String name = file.getName();
+        String name = file.getOriginalFilename();
         int index = name.lastIndexOf(".");
         if (index == -1) {
             return name;

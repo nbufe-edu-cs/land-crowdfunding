@@ -82,22 +82,22 @@ public class Land implements Serializable {
     /**
      * 开始时间
      */
-    private LocalDate startDate;
+    private String startDate;
 
     /**
      * 结束时间
      */
-    private LocalDate endDate;
+    private String endDate;
 
     /**
      * 创建时间
      */
-    private LocalDateTime createTime;
+    private String createTime;
 
     /**
      * 更新时间
      */
-    private LocalDateTime updateTime;
+    private String updateTime;
 
 
 }

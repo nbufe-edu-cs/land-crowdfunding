@@ -20,4 +20,5 @@ public enum LandStatus {
     PUBLISHED,
     FINISHED,
     ;
+
 }

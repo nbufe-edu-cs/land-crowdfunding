@@ -4,6 +4,7 @@ import org.crazyboy.common.response.ResponseResult;
 import org.crazyboy.entity.Land;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.crazyboy.model.MyPage;
+import org.crazyboy.vo.LandVO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -41,7 +42,7 @@ public interface ILandService extends IService<Land> {
      * @param landId
      * @return
      */
-    ResponseResult getLandById(String landId);
+    ResponseResult getLandInfo(String landId);
 
     /**
      * 根据土地id删除土地信息
@@ -60,7 +61,7 @@ public interface ILandService extends IService<Land> {
      * @param status
      * @return
      */
-    ResponseResult<MyPage<List<Land>>> listLand(Integer index, Integer pageSize, Integer userId, Integer status);
+    ResponseResult<MyPage<List<LandVO>>> listLand(Integer index, Integer pageSize, Integer userId, Integer status);
 
     /**
      * 修改土地
@@ -96,4 +97,11 @@ public interface ILandService extends IService<Land> {
      * @return
      */
     ResponseResult listAllLand(Integer status);
+
+    /**
+     *
+     * @param landId
+     * @return
+     */
+    ResponseResult getLandById(String landId);
 }

@@ -5,6 +5,7 @@ import org.crazyboy.common.response.ResponseResult;
 import org.crazyboy.entity.Land;
 import org.crazyboy.model.MyPage;
 import org.crazyboy.service.ILandService;
+import org.crazyboy.vo.LandVO;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,7 +56,18 @@ public class ManageLandController {
      * @param landId 土地id
      * @return
      */
-    @GetMapping
+    @GetMapping("/detail")
+    public ResponseResult getLandInfo(@RequestParam("landId") String landId) {
+        return landService.getLandInfo(landId);
+    }
+
+    /**
+     * 获取land源数据
+     *
+     * @param landId
+     * @return
+     */
+    @PostMapping("/info")
     public ResponseResult getLandById(@RequestParam("landId") String landId) {
         return landService.getLandById(landId);
     }
@@ -91,7 +103,7 @@ public class ManageLandController {
      * @return
      */
     @DeleteMapping
-    public ResponseResult delLandById(@RequestParam("landId") String landId) {
+    public ResponseResult delLandById(String landId) {
         return landService.delLandById(landId);
     }
 
@@ -103,7 +115,7 @@ public class ManageLandController {
      * @return
      */
     @GetMapping("/list")
-    public ResponseResult<MyPage<List<Land>>> listLand(
+    public ResponseResult<MyPage<List<LandVO>>> listLand(
             @RequestParam(value = "index", defaultValue = "1") Integer index,
             @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
             @RequestParam("userId") Integer userId,
